@@ -23,7 +23,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "ts-node index.ts"
   },
   "author": "",
   "license": "ISC",
