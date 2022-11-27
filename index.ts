@@ -43,7 +43,7 @@ export class Server {
                             const ws = Server.deviceId2socket.get(event.deviceId)!;
                             ws.terminate();
                         }
-                        
+
                         Server.deviceId2socket.set(event.deviceId, ws);
                         break;
                     }
@@ -58,6 +58,8 @@ export class Server {
             .get((req, res) => {
                 res.sendFile(path.resolve(__dirname + "/frontend/index.html"));
             });
+
+        this.expressWs.app.use("/", express.static(path.resolve(__dirname + "/frontend")));
     }
 
     static start() {

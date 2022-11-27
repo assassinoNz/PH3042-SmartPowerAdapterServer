@@ -1,63 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <button id="btnOn">On</button>
-    <button id="btnOff">Off</button>
+
+    <link rel="icon" type="image/png" href="./img/launcher_192.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+
+    <style>
+        * {
+            /* border: thin solid red !important; */
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+            font-family: "Source Sans Pro Regular", "Ubuntu Light", "Segoe UI Medium";
+            color: white;
+            cursor: default;
+            user-select: none;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: black;
+        }
+
+        @media (orientation: landscape) {
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            h1 {
+                font-size: 300px;
+            }
+
+            img {
+                height: 40vh;
+                margin: 0 100px;
+            }
+        }
+
+        @media (orientation: portrait) {
+            body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            h1 {
+                font-size: 100px;
+            }
+
+            img {
+                height: 40vh;
+                margin: 50px 0;
+            }
+        }
+
+        h1:hover {
+            color: gold;
+        }
+    </style>
 
     <script>
-        // const socket = new WebSocket("ws://192.168.1.4:8081/");
-        // socket.addEventListener("open", e => {
-        //     socket.send(JSON.stringify({
-        //         event: "introduce",
-        //         deviceId: "123456"
-        //     }));
-        // });
+        function main() {
+            if (window.isSecureContext) {
+                navigator.serviceWorker.register("/serviceWorker.js", { scope: "/" });
+            }
 
-        // socket.addEventListener("message", e => {
-        //     console.log(e.data);
-        // })
-
-        btnOn.addEventListener("click", () => {
-            fetch("/graphql", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    query: `mutation($deviceId: ID!, $state: Boolean!) { 
-                        SetPower(deviceId: $deviceId, state: $state)
-                    }`,
-                    variables: {
-                        deviceId: "123456",
-                        state: true
-                    }
-                })
+            btnOn.addEventListener("click", () => {
+                imgBulb.src = "img/pic_bulbon.gif";
+                fetch("/graphql", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        query: `mutation($deviceId: ID!, $state: Boolean!) { 
+                            SetPower(deviceId: $deviceId, state: $state)
+                        }`,
+                        variables: {
+                            deviceId: "123456",
+                            state: true
+                        }
+                    })
+                });
             });
-        });
 
-        btnOff.addEventListener("click", () => {
-            fetch("/graphql", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    query: `mutation($deviceId: ID!, $state: Boolean!) { 
-                        SetPower(deviceId: $deviceId, state: $state)
-                    }`,
-                    variables: {
-                        deviceId: "123456",
-                        state: false
-                    }
-                })
+            btnOff.addEventListener("click", () => {
+                imgBulb.src = "img/pic_bulboff.gif";
+                fetch("/graphql", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        query: `mutation($deviceId: ID!, $state: Boolean!) { 
+                            SetPower(deviceId: $deviceId, state: $state)
+                        }`,
+                        variables: {
+                            deviceId: "123456",
+                            state: false
+                        }
+                    })
+                });
             });
-        });
+        }
+        
+        function testWebSockets() {
+            // const socket = new WebSocket("ws://192.168.1.4:8081/");
+            // socket.addEventListener("open", e => {
+            //     socket.send(JSON.stringify({
+            //         event: "introduce",
+            //         deviceId: "123456"
+            //     }));
+            // });
+
+            // socket.addEventListener("message", e => {
+            //     console.log(e.data);
+            // });
+        }
     </script>
+</head>
+<body onload="main();">
+    <h1 id="btnOn">On</h1>
+    <img id="imgBulb" src="img/pic_bulboff.gif" alt="">
+    <h1 id="btnOff">Off</h1>
 </body>
 </html>
