@@ -1,19 +1,6 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "CommonJS",
-        "allowJs": false,
-        "declaration": true, /* Generates corresponding '.d.ts' file. */
-        "declarationMap": false, /* Generates a sourcemap for each corresponding '.d.ts' file. */
-        "sourceMap": false,
-        "removeComments": true,
-        "strict": true,
-        "noUnusedLocals": true, /* Report errors on unused locals. */
-        "noUnusedParameters": false, /* Report errors on unused parameters. */
-        "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitAny": false,
-        "skipLibCheck": true, /* Skip type checking of declaration files. */
-        "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
+        "module": "CommonJS"
     }
 }

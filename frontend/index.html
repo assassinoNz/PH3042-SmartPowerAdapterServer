@@ -110,12 +110,10 @@
                     })
                 });
             });
-
-            testWebSockets();
         }
         
         function testWebSockets() {
-            const socket = new WebSocket("ws://smart-power-adapter-server.herokuapp.com/");
+            const socket = new WebSocket("ws://localhost:8080/");
             socket.addEventListener("open", e => {
                 socket.send(JSON.stringify({
                     event: "introduce",
