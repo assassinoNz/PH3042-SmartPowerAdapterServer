@@ -16,6 +16,7 @@
     "@types/express-ws": "^3.0.1",
     "@types/graphql": "^14.5.0",
     "@types/node": "^8.0.29",
+    "@types/ws": "^8.5.3",
     "graphql-tools": "^7.0.5"
   },
   "name": "smart-power-adapter-server",
