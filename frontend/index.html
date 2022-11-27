@@ -110,20 +110,22 @@
                     })
                 });
             });
+
+            testWebSockets();
         }
         
         function testWebSockets() {
-            // const socket = new WebSocket("ws://192.168.1.4:8081/");
-            // socket.addEventListener("open", e => {
-            //     socket.send(JSON.stringify({
-            //         event: "introduce",
-            //         deviceId: "123456"
-            //     }));
-            // });
+            const socket = new WebSocket("ws://smart-power-adapter-server.herokuapp.com/");
+            socket.addEventListener("open", e => {
+                socket.send(JSON.stringify({
+                    event: "introduce",
+                    deviceId: "123456"
+                }));
+            });
 
-            // socket.addEventListener("message", e => {
-            //     console.log(e.data);
-            // });
+            socket.addEventListener("message", e => {
+                console.log(e.data);
+            });
         }
     </script>
 </head>
