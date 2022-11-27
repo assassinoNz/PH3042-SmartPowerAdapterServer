@@ -1,0 +1,12 @@
+overwrite: true
+config:
+  preResolveTypes: true # Simplifies the generated types
+  namingConvention: keep # Keeps naming as-is
+  nonOptionalTypename: false # Forces `__typename` on all selection sets
+  skipTypeNameForRoot: true # Don't generate __typename for root types
+documents: null
+generates:
+  "graphql/type.ts":
+    schema: "graphql/schema.graphql"
+    plugins:
+      - typescript

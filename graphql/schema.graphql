@@ -1,0 +1,9 @@
+#QUERY==========================================
+type Query {
+    TestQuery(test: String!): String!
+}
+
+#MUTATION========================================
+type Mutation {
+    SetPower(deviceId: ID!, state: Boolean!): Boolean!
+}

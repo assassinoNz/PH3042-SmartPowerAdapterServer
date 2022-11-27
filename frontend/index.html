@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btnOn">On</button>
+    <button id="btnOff">Off</button>
+
+    <script>
+        // const socket = new WebSocket("ws://192.168.1.4:8081/");
+        // socket.addEventListener("open", e => {
+        //     socket.send(JSON.stringify({
+        //         event: "introduce",
+        //         deviceId: "123456"
+        //     }));
+        // });
+
+        // socket.addEventListener("message", e => {
+        //     console.log(e.data);
+        // })
+
+        btnOn.addEventListener("click", () => {
+            fetch("/graphql", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    query: `mutation($deviceId: ID!, $state: Boolean!) { 
+                        SetPower(deviceId: $deviceId, state: $state)
+                    }`,
+                    variables: {
+                        deviceId: "123456",
+                        state: true
+                    }
+                })
+            });
+        });
+
+        btnOff.addEventListener("click", () => {
+            fetch("/graphql", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    query: `mutation($deviceId: ID!, $state: Boolean!) { 
+                        SetPower(deviceId: $deviceId, state: $state)
+                    }`,
+                    variables: {
+                        deviceId: "123456",
+                        state: false
+                    }
+                })
+            });
+        });
+    </script>
+</body>
+</html>
