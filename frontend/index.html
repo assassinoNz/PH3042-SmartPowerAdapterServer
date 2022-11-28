@@ -30,12 +30,14 @@
         @media (orientation: landscape) {
             body {
                 display: flex;
+                flex-wrap: wrap;
                 justify-content: center;
                 align-items: center;
+                align-content: center;
             }
 
             h1 {
-                font-size: 300px;
+                font-size: 200px;
             }
 
             img {
@@ -57,13 +59,26 @@
             }
 
             img {
-                height: 40vh;
+                height: 20vh;
                 margin: 50px 0;
             }
         }
 
         h1:hover {
             color: gold;
+        }
+
+        h2, input {
+            text-align: center;
+            width: 100%;
+            font-size: 25px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            background-color: transparent;
+            border: none;
+            outline: none;
         }
     </style>
 
@@ -74,46 +89,38 @@
             }
 
             btnOn.addEventListener("click", () => {
-                imgBulb.src = "img/pic_bulbon.gif";
-                fetch("/graphql", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        query: `mutation($deviceId: ID!, $state: Boolean!) { 
-                            SetPower(deviceId: $deviceId, state: $state)
-                        }`,
-                        variables: {
-                            deviceId: "123456",
-                            state: true
-                        }
-                    })
-                });
+                sendRequest(true);
             });
 
             btnOff.addEventListener("click", () => {
-                imgBulb.src = "img/pic_bulboff.gif";
-                fetch("/graphql", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        query: `mutation($deviceId: ID!, $state: Boolean!) { 
-                            SetPower(deviceId: $deviceId, state: $state)
-                        }`,
-                        variables: {
-                            deviceId: "123456",
-                            state: false
-                        }
-                    })
-                });
+                sendRequest(false);
+            });
+        }
+
+        function sendRequest(bulbState) {
+            fetch("/graphql", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    query: `mutation($deviceId: ID!, $state: Boolean!) { 
+                        SetPower(deviceId: $deviceId, state: $state)
+                    }`,
+                    variables: {
+                        deviceId: txtInDeviceId.value,
+                        state: bulbState
+                    }
+                })
+            }).then(res => {
+                if (res.status === 200) {
+                    imgBulb.src = bulbState === true ? "img/pic_bulbon.gif" : "img/pic_bulboff.gif";
+                }
             });
         }
         
-        function testWebSockets() {
-            const socket = new WebSocket("ws://localhost:8080/");
+        function initWebSockets() {
+            const socket = new WebSocket("wss://smart-power-adapter-server.fly.dev");
             socket.addEventListener("open", e => {
                 socket.send(JSON.stringify({
                     event: "introduce",
@@ -128,6 +135,8 @@
     </script>
 </head>
 <body onload="main();">
+    <h2>Smart Power Adapter Infrastructure Demo</h2>
+    <input id="txtInDeviceId" type="text" value="123456">
     <h1 id="btnOn">On</h1>
     <img id="imgBulb" src="img/pic_bulboff.gif" alt="">
     <h1 id="btnOff">Off</h1>
