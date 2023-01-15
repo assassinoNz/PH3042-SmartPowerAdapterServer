@@ -1,7 +1,17 @@
-import { Query, QueryTestQueryArgs } from "./type";
+import { Query, QueryGetLatestReadingsArgs } from "./type";
 
 export const resolver = {
-    TestQuery: (parent: Query, params: QueryTestQueryArgs, ctx: any, info: any): Query["TestQuery"] => {
-        return params.test
+    GetLatestReadings: (parent: Query, params: QueryGetLatestReadingsArgs, ctx: any, info: any): Query["GetLatestReadings"] => {
+        const readings = [];
+        for (let i = 0; i < params.count; i++) {
+            const datum = {
+                current: Math.random(),
+                voltage: Math.random()*100
+            }
+
+            readings.push(datum);
+        }
+
+        return readings;
     }
 };

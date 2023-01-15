@@ -1,6 +1,12 @@
 #QUERY==========================================
 type Query {
-    TestQuery(test: String!): String!
+    GetLatestReadings(count: Int!): [SensorReading!]!
+}
+
+type SensorReading {
+    current: Float!
+    voltage: Float!
+    timestamp: Int!
 }
 
 #MUTATION========================================

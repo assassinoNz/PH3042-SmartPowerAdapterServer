@@ -24,10 +24,17 @@ export type MutationSetPowerArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  TestQuery: Scalars['String'];
+  GetLatestReadings: Array<SensorReading>;
 };
 
 
-export type QueryTestQueryArgs = {
-  test: Scalars['String'];
+export type QueryGetLatestReadingsArgs = {
+  count: Scalars['Int'];
+};
+
+export type SensorReading = {
+  __typename?: 'SensorReading';
+  current: Scalars['Float'];
+  voltage: Scalars['Float'];
+  timestamp: Scalars['Int'];
 };
