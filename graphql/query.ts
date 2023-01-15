@@ -7,7 +7,7 @@ export const resolver = {
             const datum = {
                 current: Math.random(),
                 voltage: Math.random()*100,
-                timestamp: Date.now()
+                timestamp: Math.round(Date.now()/1000)
             }
 
             readings.push(datum);
