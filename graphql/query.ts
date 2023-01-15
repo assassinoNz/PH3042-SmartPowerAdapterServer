@@ -6,7 +6,8 @@ export const resolver = {
         for (let i = 0; i < params.count; i++) {
             const datum = {
                 current: Math.random(),
-                voltage: Math.random()*100
+                voltage: Math.random()*100,
+                timestamp: Date.now()
             }
 
             readings.push(datum);
