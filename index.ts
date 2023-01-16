@@ -4,6 +4,7 @@ import * as net from "net";
 
 import * as express from "express";
 import * as express_ws from "express-ws";
+import * as aedes from "aedes";
 import { WebSocket } from "ws";
 import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
