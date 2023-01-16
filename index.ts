@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import * as net from "net";
 
 import * as express from "express";
 import * as express_ws from "express-ws";
@@ -87,4 +88,42 @@ export class Server {
     }
 }
 
+export class Broker {
+    private static readonly port = 1884;
+    //@ts-ignore
+    private static readonly aedes = aedes();
+    private static readonly server = net.createServer(this.aedes.handle);
+
+    static {
+        this.aedes.on('client', (client) => {
+            console.log(`CLIENT_CONNECTED : MQTT Client ${(client ? client.id : client)} connected to aedes broker ${this.aedes.id}`)
+        });// emitted when a client disconnects from the broker
+        this.aedes.on('clientDisconnect', (client) => {
+            console.log(`CLIENT_DISCONNECTED : MQTT Client ${(client ? client.id : client)} disconnected from the aedes broker ${this.aedes.id}`)
+        });// emitted when a client subscribes to a message topic
+        this.aedes.on('subscribe', (subscriptions, client) => {
+            console.log(`TOPIC_SUBSCRIBED : MQTT Client ${(client ? client.id : client)} subscribed to topic: ${subscriptions.map(s => s.topic).join(',')} on aedes broker ${this.aedes.id} `)
+        });// emitted when a client unsubscribes from a message topic
+        this.aedes.on('unsubscribe', (subscriptions, client) => {
+            console.log(`TOPIC_UNSUBSCRIBED: MQTT Client ${(client ? client.id : client)} unsubscribed to topic: ${subscriptions.join(',')} from aedes broker ${this.aedes.id} `)
+        });// emitted when a client publishes a message packet on the topic
+        this.aedes.on('publish', (packet, client) => {
+            if (client) {
+                console.log(`MESSAGE_PUBLISHED: MQTT Client ${(client ? client.id : 'AEDES BROKER_' + this.aedes.id)} has published message "${packet.payload}" on ${packet.topic} to aedes broker ${this.aedes.id} `)
+            }
+        });
+    }
+
+    static start() {
+        this.server.listen(this.port);
+
+        console.log({
+            component: "Broker",
+            status: true,
+            port: this.port
+        });
+    }
+}
+
 Server.start();
+Broker.start();
