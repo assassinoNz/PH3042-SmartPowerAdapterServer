@@ -96,6 +96,14 @@ export class Broker {
     private static readonly server = net.createServer(this.aedes.handle);
 
     static {
+        this.aedes.authenticate = (client, username, password, callback) => {
+            if (username === "assassino" && password === "assassino@uoc") {
+                callback(null, true);
+            } else {
+                callback(null, false);
+            }
+        }
+
         this.aedes.on('client', (client) => {
             console.log(`CLIENT_CONNECTED : MQTT Client ${(client ? client.id : client)} connected to aedes broker ${this.aedes.id}`)
         });// emitted when a client disconnects from the broker
