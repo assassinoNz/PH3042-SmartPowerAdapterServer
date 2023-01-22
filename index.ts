@@ -14,7 +14,7 @@ import { resolver as Query } from "./graphql/query";
 import { resolver as Mutation } from "./graphql/mutation";
 
 export class Server {
-    private static readonly port = process.env.PORT || 8080;
+    private static readonly port = 8080;
     private static readonly expressWs = express_ws(express());
     private static readonly schema = fs.readFileSync(path.resolve(__dirname + "/graphql/schema.graphql"), "utf-8")
     static readonly deviceId2socket = new Map<string, WebSocket>();
@@ -90,7 +90,7 @@ export class Server {
 }
 
 export class Broker {
-    private static readonly port = 1884;
+    private static readonly port = 1883;
     //@ts-ignore
     private static readonly aedes = aedes();
     private static readonly server = net.createServer(this.aedes.handle);

@@ -36,3 +36,15 @@ processes = []
     interval = "15s"
     restart_limit = 0
     timeout = "2s"
+
+[[services]]
+  internal_port = 1884
+  protocol = 'tcp'
+
+  [[services.ports]]
+    handlers = [ ]
+    port = 1883
+
+  [[services.ports]]
+    handlers = [ ]
+    port = 1884
