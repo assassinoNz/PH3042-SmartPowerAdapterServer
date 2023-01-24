@@ -8,10 +8,24 @@ import * as aedes from "aedes";
 import { WebSocket } from "ws";
 import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import * as firebaseApp from "firebase-admin/app";
+import * as firestore from "firebase-admin/firestore";
 
 import { OutboundFirmwareEvent, InboundFirmwareEvent } from "./lib/interface";
 import { resolver as Query } from "./graphql/query";
 import { resolver as Mutation } from "./graphql/mutation";
+
+export class Firebase {
+    static db: firestore.Firestore;
+
+    static {
+        firebaseApp.initializeApp({
+            credential: firebaseApp.cert("etc/smart-power-adapter-3a443-firebase-adminsdk-4gp49-dee9ce7957.json")
+        });
+        
+        this.db = firestore.getFirestore();
+    }
+}
 
 export class Server {
     private static readonly port = 8080;
@@ -97,28 +111,53 @@ export class Broker {
 
     static {
         this.aedes.authenticate = (client, username, password, callback) => {
-            if (username === "assassino" && password === "assassino@uoc") {
-                callback(null, true);
-            } else {
-                callback(null, false);
-            }
+            console.log(username, password);
+            callback(null, true);
+            
+            // if (username === "assassino" && password === "assassino@uoc") {
+            //     callback(null, true);
+            // } else {
+            //     callback(null, false);
+            // }
         }
 
-        this.aedes.on('client', (client) => {
-            console.log(`CLIENT_CONNECTED : MQTT Client ${(client ? client.id : client)} connected to aedes broker ${this.aedes.id}`)
-        });// emitted when a client disconnects from the broker
-        this.aedes.on('clientDisconnect', (client) => {
-            console.log(`CLIENT_DISCONNECTED : MQTT Client ${(client ? client.id : client)} disconnected from the aedes broker ${this.aedes.id}`)
-        });// emitted when a client subscribes to a message topic
-        this.aedes.on('subscribe', (subscriptions, client) => {
-            console.log(`TOPIC_SUBSCRIBED : MQTT Client ${(client ? client.id : client)} subscribed to topic: ${subscriptions.map(s => s.topic).join(',')} on aedes broker ${this.aedes.id} `)
-        });// emitted when a client unsubscribes from a message topic
-        this.aedes.on('unsubscribe', (subscriptions, client) => {
-            console.log(`TOPIC_UNSUBSCRIBED: MQTT Client ${(client ? client.id : client)} unsubscribed to topic: ${subscriptions.join(',')} from aedes broker ${this.aedes.id} `)
-        });// emitted when a client publishes a message packet on the topic
-        this.aedes.on('publish', (packet, client) => {
-            if (client) {
-                console.log(`MESSAGE_PUBLISHED: MQTT Client ${(client ? client.id : 'AEDES BROKER_' + this.aedes.id)} has published message "${packet.payload}" on ${packet.topic} to aedes broker ${this.aedes.id} `)
+        this.aedes.on("client", (client) => {
+            console.log(`CLIENT: ${client?.id} CONNECTED`);
+        });
+        this.aedes.on("clientDisconnect", (client) => {
+            console.log(`CLIENT: ${client?.id} DISCONNECTED`);
+        });
+        this.aedes.on("subscribe", (subscriptions, client) => {
+            console.log(`CLIENT: ${client?.id} SUBSCRIBED: ${subscriptions.map(s => s.topic).join(',')}`);
+        });
+        this.aedes.on("unsubscribe", (subscriptions, client) => {
+            console.log(`CLIENT: ${client?.id} UNSUBSCRIBED: ${subscriptions.join(',')}`);
+        });
+        this.aedes.on("publish", async (packet, client) => {
+            console.log(`CLIENT: ${client?.id} PUBLISHED: ${packet.payload} TOPIC: ${packet.topic}`);
+            switch (packet.topic) {
+                case "introduce": {
+                    const payload = JSON.parse(packet.payload);
+                    break;
+                }
+                case "on": {
+                    break;
+                }
+                case "off": {
+                    break;
+                }
+                case "readings": {
+                    const readings = JSON.parse(packet.payload);
+                    const colRef = Firebase.db.collection("devices").doc(client.id).collection("readings");
+                    var batch = Firebase.db.batch();
+
+                    for (const reading of readings) {
+                        batch.set(colRef.doc(), reading);
+                    }
+                    await batch.commit();
+
+                    break;
+                }
             }
         });
     }
