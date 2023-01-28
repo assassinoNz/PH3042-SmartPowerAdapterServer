@@ -136,22 +136,13 @@ export class Broker {
         this.aedes.on("publish", async (packet, client) => {
             console.log(`CLIENT: ${client?.id} PUBLISHED: ${packet.payload} TOPIC: ${packet.topic}`);
             switch (packet.topic) {
-                case "introduce": {
-                    const payload = JSON.parse(packet.payload);
-                    break;
-                }
-                case "on": {
-                    break;
-                }
-                case "off": {
-                    break;
-                }
                 case "readings": {
-                    const readings = JSON.parse(packet.payload);
+                    const message = JSON.parse(packet.payload);
+                    console.log(message);
                     const colRef = Firebase.db.collection("devices").doc(client.id).collection("readings");
                     var batch = Firebase.db.batch();
 
-                    for (const reading of readings) {
+                    for (const reading of message) {
                         batch.set(colRef.doc(), reading);
                     }
                     await batch.commit();
