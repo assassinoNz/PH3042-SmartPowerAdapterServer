@@ -138,7 +138,6 @@ export class Broker {
             switch (packet.topic) {
                 case "readings": {
                     const message = JSON.parse(packet.payload);
-                    console.log(message);
                     const colRef = Firebase.db.collection("devices").doc(client.id).collection("readings");
                     var batch = Firebase.db.batch();
 

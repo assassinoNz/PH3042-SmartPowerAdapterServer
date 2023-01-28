@@ -1,4 +1,4 @@
-# fly.toml file generated for smart-power-adapter-server on 2022-11-28T14:46:23+05:30
+# fly.toml file generated for smart-power-adapter-server on 2023-01-28T14:06:39+05:30
 
 app = "smart-power-adapter-server"
 kill_signal = "SIGINT"
@@ -42,5 +42,5 @@ processes = []
   protocol = "tcp"
 
   [[services.ports]]
-    handlers = [ ]
+    handlers = []
     port = 1883
