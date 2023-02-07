@@ -151,11 +151,17 @@ export class Broker {
             switch (packet.topic) {
                 case "readings": {
                     const message = JSON.parse(packet.payload);
-                    const colRef = Firebase.db.collection("devices").doc(client.id).collection("readings");
-                    var batch = Firebase.db.batch();
 
+                    const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
+                    deviceDocRef.set({
+                        name: ""
+                    });
+
+                    const readingsColRef = deviceDocRef.collection("readings");
+
+                    var batch = Firebase.db.batch();
                     for (const reading of message) {
-                        batch.set(colRef.doc(), reading);
+                        batch.set(readingsColRef.doc(), reading);
                     }
                     await batch.commit();
 
