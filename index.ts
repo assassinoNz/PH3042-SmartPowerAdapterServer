@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as net from "net";
+import * as crypto from "crypto";
 
 import * as express from "express";
 import * as express_ws from "express-ws";
@@ -73,6 +74,18 @@ export class Server {
         this.expressWs.app.route("/")
             .get((req, res) => {
                 res.sendFile(path.resolve(__dirname + "/frontend/index.html"));
+            });
+
+        this.expressWs.app.route("/update/firmware.bin")
+            .get((req, res) => {
+                const firmwarePath = path.resolve(__dirname + "/../Smart-Power-Adapter-Firmware/.pio/build/nodemcuv2/firmware.bin");
+                const firmwareHash = crypto.createHash("md5").update(fs.readFileSync(firmwarePath)).digest("hex");
+                
+                if (req.headers["x-esp8266-sketch-md5"] === firmwareHash) {
+                    res.sendStatus(304);
+                } else {
+                    res.sendFile(firmwarePath);
+                }
             });
 
         this.expressWs.app.use("/", express.static(path.resolve(__dirname + "/frontend")));
