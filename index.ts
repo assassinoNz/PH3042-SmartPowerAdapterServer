@@ -148,25 +148,22 @@ export class Broker {
         });
         this.aedes.on("publish", async (packet, client) => {
             console.log(`CLIENT: ${client?.id} PUBLISHED: ${packet.payload} TOPIC: ${packet.topic}`);
-            switch (packet.topic) {
-                case "readings": {
-                    const message = JSON.parse(packet.payload);
 
-                    const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
-                    deviceDocRef.set({
-                        name: ""
-                    });
-
-                    const readingsColRef = deviceDocRef.collection("readings");
-
-                    var batch = Firebase.db.batch();
-                    for (const reading of message) {
-                        batch.set(readingsColRef.doc(), reading);
-                    }
-                    await batch.commit();
-
-                    break;
+            if (packet.topic.endsWith("/readings")) {
+                const message = JSON.parse(packet.payload);
+    
+                const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
+                deviceDocRef.set({
+                    name: ""
+                });
+    
+                const readingsColRef = deviceDocRef.collection("readings");
+    
+                var batch = Firebase.db.batch();
+                for (const reading of message) {
+                    batch.set(readingsColRef.doc(), reading);
                 }
+                await batch.commit();
             }
         });
     }
