@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import * as net from "net";
+import * as tls from "tls";
 import * as crypto from "crypto";
 
 import * as express from "express";
@@ -31,7 +31,7 @@ export class Firebase {
 export class Server {
     private static readonly port = 8080;
     private static readonly expressWs = express_ws(express());
-    private static readonly schema = fs.readFileSync(path.resolve(__dirname + "/graphql/schema.graphql"), "utf-8")
+    private static readonly schema = fs.readFileSync(path.resolve(__dirname + "/graphql/schema.graphql"), "utf-8");
     static readonly deviceId2socket = new Map<string, WebSocket>();
 
     static {
@@ -120,7 +120,10 @@ export class Broker {
     private static readonly port = 1883;
     //@ts-ignore
     private static readonly aedes = aedes();
-    private static readonly server = net.createServer(this.aedes.handle);
+    private static readonly server = tls.createServer({
+        key: fs.readFileSync("etc/server.key"),
+        cert: fs.readFileSync("etc/server.crt")
+    }, this.aedes.handle);
 
     static {
         this.aedes.authenticate = (client, username, password, callback) => {
