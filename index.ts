@@ -161,12 +161,7 @@ export class Broker {
                 });
     
                 const readingsColRef = deviceDocRef.collection("readings");
-    
-                var batch = Firebase.db.batch();
-                for (const reading of message) {
-                    batch.set(readingsColRef.doc(), reading);
-                }
-                await batch.commit();
+                readingsColRef.add(message[0]);
             }
         });
     }
