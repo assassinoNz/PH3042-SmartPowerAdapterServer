@@ -167,17 +167,17 @@ export class Broker {
                     console.log(e);
                 }
             } else if (packet.topic.endsWith("/predict/onoff_send")) {
-                fetch("https://wandering-water-6831.fly.dev/predict", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ device_id: "QEIZrUmZGUuzBqRnw0jZ", "data_reading": { i: 0.9900436818128375, time: 1676362048419, v: 0.5681495890359043 } })
-                })
-                .then(res => res.text())
-                .then(res => {
-                    this.aedes.publish({ topic: client.id + "/predict/onoff_recieve", payload: res });
-                });
+                // fetch("https://wandering-water-6831.fly.dev/predict", {
+                //     method: "POST",
+                //     headers: {
+                //         "Content-Type": "application/json"
+                //     },
+                //     body: JSON.stringify({ device_id: "QEIZrUmZGUuzBqRnw0jZ", "data_reading": { i: 0.9900436818128375, time: 1676362048419, v: 0.5681495890359043 } })
+                // })
+                // .then(res => res.text())
+                // .then(res => {
+                    // });
+                this.aedes.publish({ topic: client.id + "/predict/onoff_recieve", payload: `{"requested device id":"${client.id}","requested_value":[[1,"08"]],"response":[true]}` });
             }
         });
     }
