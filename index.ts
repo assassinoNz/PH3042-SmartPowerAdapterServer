@@ -156,27 +156,28 @@ export class Broker {
                 try {
                     const message = JSON.parse(packet.payload);
         
-                    const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
-                    deviceDocRef.set({
-                        name: ""
-                    });
+                    // const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
+                    // deviceDocRef.set({
+                    //     name: ""
+                    // });
         
-                    const readingsColRef = deviceDocRef.collection("readings");
-                    readingsColRef.add(message[0]);
+                    // const readingsColRef = deviceDocRef.collection("readings");
+                    // readingsColRef.add(message[0]);
                 } catch (e: any) {
                     console.log(e);
                 }
             } else if (packet.topic.endsWith("/predict/onoff_send")) {
-                this.aedes.publish({ topic: client.id + "/predict/onoff_recieve", payload: "Hello world"})
-                // const res = fetch("https://wandering-water-6831.fly.dev/predict", {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json"
-                //     },
-                //     body: JSON.stringify({ device_id: "QEIZrUmZGUuzBqRnw0jZ", "data_reading": { i: 0.9900436818128375, time: 1676362048419, v: 0.5681495890359043 } })
-                // })
-                // .then(res => res.json())
-                // .then(res => console.log(res));
+                fetch("https://wandering-water-6831.fly.dev/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ device_id: "QEIZrUmZGUuzBqRnw0jZ", "data_reading": { i: 0.9900436818128375, time: 1676362048419, v: 0.5681495890359043 } })
+                })
+                .then(res => res.text())
+                .then(res => {
+                    this.aedes.publish({ topic: client.id + "/predict/onoff_recieve", payload: res });
+                });
             }
         });
     }
