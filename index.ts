@@ -29,7 +29,6 @@ export class Server {
         key: fs.readFileSync("etc/server.key"),
         cert: fs.readFileSync("etc/server.crt")
     }, this.express);
-    static readonly deviceId2socket = new Map<string, WebSocket>();
 
     static {
         this.express.route("/update/firmware.bin")
@@ -43,6 +42,8 @@ export class Server {
                     res.sendFile(firmwarePath);
                 }
             });
+
+        this.express.use("/", express.static(path.resolve(__dirname + "/frontend")));
     }
 
     static start() {
