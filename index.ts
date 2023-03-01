@@ -170,11 +170,15 @@ export class Broker {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ device_id: "QEIZrUmZGUuzBqRnw0jZ", "data_reading": { i: 0.9900436818128375, time: 1676362048419, v: 0.5681495890359043 } })
+                    body: JSON.stringify({ device_id: client.id, "data_reading": { i: 0.9900436818128375, time: 1676362048419, v: 0.5681495890359043 } })
                 })
                 .then(res => res.text())
                 .then(res => {
-                    this.aedes.publish({ topic: client.id + "/predict/onoff_receive", payload: res });
+                    if (res === "device not registered") {
+                        this.aedes.publish({ topic: client.id + "/predict/onoff_receive", payload: JSON.stringify({response: false}) });
+                    } else {
+                        this.aedes.publish({ topic: client.id + "/predict/onoff_receive", payload: res });
+                    }
                 });
             }  else if (packet.topic.endsWith("/predict/power_send")) {
                 fetch("https://wandering-water-6831.fly.dev/cforcast", {
