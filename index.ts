@@ -174,7 +174,7 @@ export class Broker {
                 })
                 .then(res => res.text())
                 .then(res => {
-                    this.aedes.publish({ topic: client.id + "/predict/onoff_recieve", payload: res });
+                    this.aedes.publish({ topic: client.id + "/predict/onoff_receive", payload: res });
                 });
             }  else if (packet.topic.endsWith("/predict/power_send")) {
                 fetch("https://wandering-water-6831.fly.dev/cforcast", {
@@ -186,7 +186,7 @@ export class Broker {
                 })
                 .then(res => res.text())
                 .then(res => {
-                    this.aedes.publish({ topic: client.id + "/predict/power_recieve", payload: res });
+                    this.aedes.publish({ topic: client.id + "/predict/power_receive", payload: res });
                 });
             }
         });
