@@ -3,6 +3,7 @@ import * as path from "path";
 import * as tls from "tls";
 import * as crypto from "crypto";
 
+import fetch from "node-fetch";
 import * as express from "express";
 import * as express_ws from "express-ws";
 import * as aedes from "aedes";
@@ -127,14 +128,11 @@ export class Broker {
 
     static {
         this.aedes.authenticate = (client, username, password, callback) => {
-            console.log(username, password);
-            callback(null, true);
-            
-            // if (username === "assassino" && password === "assassino@uoc") {
-            //     callback(null, true);
-            // } else {
-            //     callback(null, false);
-            // }
+            if (username === "assassino") {
+                callback(null, true);
+            } else {
+                callback(null, false);
+            }
         }
 
         this.aedes.on("client", (client) => {
@@ -167,17 +165,29 @@ export class Broker {
                     console.log(e);
                 }
             } else if (packet.topic.endsWith("/predict/onoff_send")) {
-                // fetch("https://wandering-water-6831.fly.dev/predict", {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json"
-                //     },
-                //     body: JSON.stringify({ device_id: "QEIZrUmZGUuzBqRnw0jZ", "data_reading": { i: 0.9900436818128375, time: 1676362048419, v: 0.5681495890359043 } })
-                // })
-                // .then(res => res.text())
-                // .then(res => {
-                    // });
-                this.aedes.publish({ topic: client.id + "/predict/onoff_recieve", payload: `{"requested device id":"${client.id}","requested_value":[[1,"08"]],"response":[true]}` });
+                fetch("https://wandering-water-6831.fly.dev/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ device_id: "QEIZrUmZGUuzBqRnw0jZ", "data_reading": { i: 0.9900436818128375, time: 1676362048419, v: 0.5681495890359043 } })
+                })
+                .then(res => res.text())
+                .then(res => {
+                    this.aedes.publish({ topic: client.id + "/predict/onoff_recieve", payload: res });
+                });
+            }  else if (packet.topic.endsWith("/predict/power_send")) {
+                fetch("https://wandering-water-6831.fly.dev/cforcast", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ device_id: client.id })
+                })
+                .then(res => res.text())
+                .then(res => {
+                    this.aedes.publish({ topic: client.id + "/predict/power_recieve", payload: res });
+                });
             }
         });
     }
