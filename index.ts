@@ -95,13 +95,13 @@ export class Broker {
                 try {
                     const message = JSON.parse(packet.payload);
         
-                    // const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
-                    // deviceDocRef.set({
-                    //     name: ""
-                    // });
+                    const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
+                    deviceDocRef.set({
+                        name: ""
+                    });
         
-                    // const readingsColRef = deviceDocRef.collection("readings");
-                    // readingsColRef.add(message[0]);
+                    const readingsColRef = deviceDocRef.collection("readings");
+                    readingsColRef.add(message[0]);
                 } catch (e: any) {
                     console.log(e);
                 }
