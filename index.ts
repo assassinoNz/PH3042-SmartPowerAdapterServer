@@ -92,19 +92,19 @@ export class Broker {
             console.log(`CLIENT: ${client?.id} PUBLISHED: ${packet.payload} TOPIC: ${packet.topic}`);
 
             if (packet.topic.endsWith("/readings")) {
-                try {
-                    const message = JSON.parse(packet.payload);
+                // try {
+                //     const message = JSON.parse(packet.payload);
         
-                    const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
-                    deviceDocRef.set({
-                        name: ""
-                    });
+                //     const deviceDocRef = Firebase.db.collection("devices").doc(client.id);
+                //     deviceDocRef.set({
+                //         name: ""
+                //     });
         
-                    const readingsColRef = deviceDocRef.collection("readings");
-                    readingsColRef.add(message[0]);
-                } catch (e: any) {
-                    console.log(e);
-                }
+                //     const readingsColRef = deviceDocRef.collection("readings");
+                //     readingsColRef.add(message[0]);
+                // } catch (e: any) {
+                //     console.log(e);
+                // }
             } else if (packet.topic.endsWith("/predict/onoff_send")) {
                 fetch("https://wandering-water-6831.fly.dev/predict", {
                     method: "POST",
